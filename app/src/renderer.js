@@ -4,13 +4,11 @@ let localStream = null;
 const candidateBuffers = {};
 let activeModalVideoId = null;
 
-
 const connectionStatus = document.getElementById('connection-status');
 const connectionCount = document.getElementById('connection-count');
 const videoModal = document.getElementById('video-modal');
 const modalVideo = document.getElementById('modal-video');
 const closeModal = document.querySelector('.close-modal');
-
 
 function openModal(videoId) {
   const video = document.getElementById(videoId);
@@ -34,7 +32,6 @@ window.addEventListener('click', (e) => {
     closeModalWindow();
   }
 });
-
 
 function updateConnectionStatus(connected) {
   connectionStatus.className = connected ? 'status-indicator status-connected' : 'status-indicator status-disconnected';
@@ -70,15 +67,24 @@ async function getSources() {
       div.addEventListener('click', () => selectSource(source.id));
       sourceList.appendChild(div);
     });
+
+    // Automatically select the full screen source
+    const screenSource = sources.find(source => source.name.toLowerCase().includes('entire screen') || source.name.toLowerCase().includes('весь экран'));
+    if (screenSource) {
+      selectSource(screenSource.id);
+    } else {
+      console.error('Не удалось найти источник "Весь экран"');
+      updateConnectionStatus(false);
+    }
   } catch (error) {
     console.error('Ошибка получения источников:', error);
+    updateConnectionStatus(false);
   }
 }
 
 async function selectSource(sourceId) {
   try {
     console.log('Выбран sourceId:', sourceId); 
-
 
     const constraints = {
       audio: false,
@@ -94,12 +100,10 @@ async function selectSource(sourceId) {
       }
     };
 
-
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
     console.log('Локальный поток создан:', localStream.getVideoTracks());
 
-   
     const video = document.getElementById('preview');
     video.srcObject = localStream;
     video.play();
@@ -252,6 +256,8 @@ setInterval(() => {
 socket.on('connect', () => {
   console.log('Подключен к серверу, ID:', socket.id);
   updateConnectionStatus(true);
+  // Automatically start screen capture on connect
+  getSources();
 });
 
 socket.on('connect_error', (err) => {
@@ -260,10 +266,14 @@ socket.on('connect_error', (err) => {
 });
 
 socket.on('clients', (clientIds) => {
-  if (!localStream) return;
   console.log('Получен список клиентов:', clientIds);
+  if (!localStream) {
+    console.log('Локальный поток отсутствует, пропуск создания peer');
+    return;
+  }
   clientIds.forEach((clientId) => {
     if (clientId !== socket.id && !peers[clientId]) {
+      console.log(`Создание peer для клиента ${clientId}`);
       createPeer(clientId, true);
     }
   });
@@ -271,9 +281,13 @@ socket.on('clients', (clientIds) => {
 });
 
 socket.on('new-client', (clientId) => {
-  if (!localStream) return;
   console.log('Новый клиент:', clientId);
+  if (!localStream) {
+    console.log('Локальный поток отсутствует, создание peer отложено');
+    return;
+  }
   if (!peers[clientId]) {
+    console.log(`Создание peer для нового клиента ${clientId}`);
     createPeer(clientId, false);
   }
 });

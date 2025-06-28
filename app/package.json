@@ -1,8 +1,8 @@
 {
-  "name": "my-electron-app",
-  "productName": "my-electron-app",
+  "name": "IThub_Spec",
+  "productName": "IThub_Spectator",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -12,10 +12,11 @@
     "lint": "echo \"No linting configured\""
   },
   "keywords": [
-    "demostration, client, meeting"
+    "demonstration, client, Spectator"
   ],
   "author": {
     "name": "Ahmed",
+    "login": "DevAhmed",
     "email": "amoshal1997@gmail.com"
   },
   "license": "MIT",

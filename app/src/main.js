@@ -1,8 +1,11 @@
-const { app, BrowserWindow, desktopCapturer, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, desktopCapturer, ipcMain, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 
+let mainWindow = null;
+let tray = null;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -10,10 +13,11 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       nodeIntegration: false
-    }
+    },
+    icon: path.join(__dirname, './assets/logo/logo.ico') 
   });
 
-  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
@@ -23,22 +27,72 @@ function createWindow() {
       }
     });
   });
-Menu.setApplicationMenu(null)
-win.loadFile(path.join(__dirname, 'index.html'));
-win.webContents.openDevTools();
+
+  Menu.setApplicationMenu(null);
+  mainWindow.loadFile(path.join(__dirname, 'index.html')); 
+  mainWindow.webContents.openDevTools(); 
+
+
+  mainWindow.on('close', (event) => {
+    if (!app.isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+    return false;
+  });
+
+  mainWindow.on('minimize', (event) => {
+    event.preventDefault();
+    mainWindow.hide();
+  });
+}
+
+function createTray() {
+  const iconPath = path.join(__dirname, './assets/logo/logo.ico');
+  const icon = nativeImage.createFromPath(iconPath);
+  tray = new Tray(icon);
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Показать приложение',
+      click: () => {
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Выход',
+      click: () => {
+        app.isQuitting = true;
+        app.quit();
+      }
+    }
+  ]);
+
+  tray.setToolTip('Screenshot Sharing App');
+  tray.setContextMenu(contextMenu);
+
+  tray.on('double-click', () => {
+    mainWindow.show();
+  });
 }
 
 app.whenReady().then(() => {
   createWindow();
-  
+  createTray();
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+      createTray();
+    } else {
+      mainWindow.show();
+    }
   });
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+  }
 });
 
 ipcMain.handle('GET_SOURCES', async () => {
