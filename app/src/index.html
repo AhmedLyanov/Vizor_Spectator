@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screenshot Sharing App</title>
+  <link rel="stylesheet" href="./assets/index.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-display"></i>
+        <h2>Источники экрана</h2>
+      </div>
+      
+      <button id="getSourcesButton" class="btn btn-outline" style="width: 100%; margin-bottom: 20px;">
+        <i class="fas fa-refresh"></i> Обновить источники
+      </button>
+      
+      <div id="source-list"></div>
+    </div>
+    
+  
+    <div class="main-content">
+      <div class="header">
+        <h1><i class="fas fa-desktop"></i> Демонстрация экрана</h1>
+        <div class="header-controls">
+          <span id="connection-status" class="status-indicator status-disconnected"></span>
+          <span id="connection-count" class="connection-count">0 подключений</span>
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="preview-header">
+          <h3>Предпросмотр</h3>
+        </div>
+        <div id="preview-container">
+          <video id="preview" autoplay muted></video>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fas fa-users"></i>
+        <h2>Участники демонстрации</h2>
+      </div>
+
+      <div id="remote-videos"></div>
+    </div>
+  </div>
+  <div id="video-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <video id="modal-video" autoplay></video>
+    </div>
+  </div>
+
+  <script src="../node_modules/socket.io/client-dist/socket.io.min.js"></script>
+  <script src="../node_modules/simple-peer/simplepeer.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
