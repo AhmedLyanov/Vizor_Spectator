@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/', { reconnectionAttempts: 5, reconnectionDelay: 1000 });
+const socket = io('http://79.174.91.240:3000/', { reconnectionAttempts: 5, reconnectionDelay: 1000 });
 const peers = {};
 let localStream = null;
 const candidateBuffers = {};
@@ -98,7 +98,7 @@ function createPeer(targetId, initiator = false) {
           credential: 'your-twilio-password'
         },
         {
-          urls: 'turn:localhost:3478?transport=udp',
+          urls: 'turn:79.174.91.240:3478?transport=udp',
           username: 'valid-username',
           credential: 'valid-password'
         }
