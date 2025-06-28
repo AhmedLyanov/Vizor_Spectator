@@ -42,56 +42,22 @@ function updateConnectionCount() {
   connectionCount.textContent = `${count} подключений`;
 }
 
-async function getSources() {
+async function startScreenCapture() {
   try {
     const sources = await window.electronAPI.getSources();
-    const sourceList = document.getElementById('source-list');
-    sourceList.innerHTML = '';
-
-    sources.forEach(source => {
-      const div = document.createElement('div');
-      div.className = 'source-item';
-      
-      const img = document.createElement('img');
-      img.className = 'source-thumbnail';
-      img.src = source.thumbnail;
-      img.alt = source.name;
-      
-      const p = document.createElement('p');
-      p.className = 'source-name';
-      p.textContent = source.name;
-      
-      div.appendChild(img);
-      div.appendChild(p);
-      
-      div.addEventListener('click', () => selectSource(source.id));
-      sourceList.appendChild(div);
-    });
-
-    // Automatically select the full screen source
     const screenSource = sources.find(source => source.name.toLowerCase().includes('entire screen') || source.name.toLowerCase().includes('весь экран'));
-    if (screenSource) {
-      selectSource(screenSource.id);
-    } else {
+    if (!screenSource) {
       console.error('Не удалось найти источник "Весь экран"');
       updateConnectionStatus(false);
+      return;
     }
-  } catch (error) {
-    console.error('Ошибка получения источников:', error);
-    updateConnectionStatus(false);
-  }
-}
-
-async function selectSource(sourceId) {
-  try {
-    console.log('Выбран sourceId:', sourceId); 
 
     const constraints = {
       audio: false,
       video: {
         mandatory: {
           chromeMediaSource: 'desktop',
-          chromeMediaSourceId: sourceId,
+          chromeMediaSourceId: screenSource.id,
         },
         optional: [
           { maxWidth: window.screen.width },
@@ -101,7 +67,6 @@ async function selectSource(sourceId) {
     };
 
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-
     console.log('Локальный поток создан:', localStream.getVideoTracks());
 
     const video = document.getElementById('preview');
@@ -256,8 +221,7 @@ setInterval(() => {
 socket.on('connect', () => {
   console.log('Подключен к серверу, ID:', socket.id);
   updateConnectionStatus(true);
-  // Automatically start screen capture on connect
-  getSources();
+  startScreenCapture();
 });
 
 socket.on('connect_error', (err) => {
@@ -327,8 +291,6 @@ socket.on('client-disconnected', (clientId) => {
     updateConnectionCount();
   }
 });
-
-document.getElementById('getSourcesButton').addEventListener('click', getSources);
 
 window.addEventListener('resize', () => {
   if (activeModalVideoId) {
