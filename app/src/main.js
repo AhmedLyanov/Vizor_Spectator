@@ -14,7 +14,8 @@ function createWindow() {
       enableRemoteModule: false,
       nodeIntegration: false
     },
-    icon: path.join(__dirname, './assets/logo/logo.ico') 
+    icon: path.join(__dirname, './assets/logo/logo.ico'), 
+    show: false
   });
 
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
@@ -68,7 +69,7 @@ function createTray() {
     }
   ]);
 
-  tray.setToolTip('Screenshot Sharing App');
+  tray.setToolTip('IThub Spectator');
   tray.setContextMenu(contextMenu);
 
   tray.on('double-click', () => {
