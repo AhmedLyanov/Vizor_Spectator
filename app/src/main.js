@@ -1,5 +1,6 @@
 const { app, BrowserWindow, desktopCapturer, ipcMain, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
+const os = require('os');
 
 let mainWindow = null;
 let tray = null;
@@ -32,7 +33,6 @@ function createWindow() {
   Menu.setApplicationMenu(null);
   mainWindow.loadFile(path.join(__dirname, 'index.html')); 
   mainWindow.webContents.openDevTools(); 
-
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
@@ -106,4 +106,8 @@ ipcMain.handle('GET_SOURCES', async () => {
     name: source.name,
     thumbnail: source.thumbnail.toDataURL()
   }));
+});
+
+ipcMain.handle('GET_USERNAME', async () => {
+  return os.userInfo().username; 
 });

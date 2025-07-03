@@ -3,6 +3,7 @@ const peers = {};
 let localStream = null;
 const candidateBuffers = {};
 let activeModalVideoId = null;
+const pendingClients = new Map(); 
 
 const connectionStatus = document.getElementById('connection-status');
 const connectionCount = document.getElementById('connection-count');
@@ -73,7 +74,18 @@ async function startScreenCapture() {
     video.srcObject = localStream;
     video.play();
     
-    socket.emit('request-clients');
+    setTimeout(() => {
+      socket.emit('request-clients');
+      pendingClients.forEach(({ id, username }, key) => {
+        if (!peers[id] && username !== 'Guest') {
+          console.log(`Обработка отложенного клиента ${id} с именем ${username}`);
+          createPeer(id, false, username);
+        } else if (username === 'Guest') {
+          console.log(`Запрос имени для отложенного клиента ${id}`);
+          socket.emit('request-username', id);
+        }
+      });
+    }, 500);
     updateConnectionStatus(true);
   } catch (error) {
     console.error('Ошибка при захвате экрана:', error);
@@ -81,8 +93,8 @@ async function startScreenCapture() {
   }
 }
 
-function createPeer(targetId, initiator = false) {
-  console.log(`Создание peer для ${targetId}, initiator: ${initiator}`);
+function createPeer(targetId, initiator = false, username) {
+  console.log(`Создание peer для ${targetId}, initiator: ${initiator}, username: ${username || 'Guest'}`);
   const peer = new SimplePeer({
     initiator,
     trickle: true,
@@ -123,7 +135,7 @@ function createPeer(targetId, initiator = false) {
   });
 
   peer.on('stream', (stream) => {
-    console.log(`Получен поток от ${targetId}`, stream.getTracks());
+    console.log(`Получен поток от ${targetId} (имя: ${username || 'Guest'})`, stream.getTracks());
     const videoContainer = document.createElement('div');
     videoContainer.className = 'remote-video-container';
     videoContainer.id = `container-${targetId}`;
@@ -133,6 +145,10 @@ function createPeer(targetId, initiator = false) {
     video.srcObject = stream;
     video.autoplay = true;
     video.id = `video-${targetId}`;
+    
+    const usernameLabel = document.createElement('div');
+    usernameLabel.className = 'username-label';
+    usernameLabel.textContent = username || 'Guest';
     
     const videoActions = document.createElement('div');
     videoActions.className = 'video-actions';
@@ -145,6 +161,7 @@ function createPeer(targetId, initiator = false) {
     
     videoActions.appendChild(expandBtn);
     videoContainer.appendChild(video);
+    videoContainer.appendChild(usernameLabel);
     videoContainer.appendChild(videoActions);
     
     document.getElementById('remote-videos').appendChild(videoContainer);
@@ -193,7 +210,7 @@ function createPeer(targetId, initiator = false) {
     setTimeout(() => {
       if (!peers[targetId] && localStream) {
         console.log(`Повторное создание peer для ${targetId}`);
-        createPeer(targetId, initiator);
+        socket.emit('request-username', targetId);
       }
     }, 5000);
   });
@@ -218,10 +235,20 @@ setInterval(() => {
   });
 }, 1000);
 
-socket.on('connect', () => {
+socket.on('connect', async () => {
   console.log('Подключен к серверу, ID:', socket.id);
-  updateConnectionStatus(true);
-  startScreenCapture();
+  try {
+    const username = await window.electronAPI.getUsername();
+    console.log('Отправляем имя пользователя на сервер:', username);
+    socket.emit('set-username', { username });
+    updateConnectionStatus(true);
+    startScreenCapture();
+  } catch (error) {
+    console.error('Ошибка при получении имени пользователя:', error);
+    socket.emit('set-username', { username: 'Guest' });
+    updateConnectionStatus(true);
+    startScreenCapture();
+  }
 });
 
 socket.on('connect_error', (err) => {
@@ -229,36 +256,80 @@ socket.on('connect_error', (err) => {
   updateConnectionStatus(false);
 });
 
-socket.on('clients', (clientIds) => {
-  console.log('Получен список клиентов:', clientIds);
+socket.on('clients', (clients) => {
+  console.log('Получен список клиентов:', JSON.stringify(clients));
   if (!localStream) {
     console.log('Локальный поток отсутствует, пропуск создания peer');
     return;
   }
-  clientIds.forEach((clientId) => {
-    if (clientId !== socket.id && !peers[clientId]) {
-      console.log(`Создание peer для клиента ${clientId}`);
-      createPeer(clientId, true);
+  clients.forEach(({ id, username }) => {
+    if (id !== socket.id && !peers[id]) {
+      if (username === 'Guest') {
+        console.log(`Имя пользователя для ${id} - Guest, запрашиваем актуальное имя`);
+        socket.emit('request-username', id);
+      } else {
+        console.log(`Создание peer для клиента ${id} с именем ${username}`);
+        createPeer(id, true, username);
+      }
     }
   });
   updateConnectionCount();
 });
 
-socket.on('new-client', (clientId) => {
-  console.log('Новый клиент:', clientId);
+socket.on('new-client', ({ id, username }) => {
+  console.log(`Новый клиент: ${id}, имя: ${username || 'Guest'}`);
   if (!localStream) {
-    console.log('Локальный поток отсутствует, создание peer отложено');
+    console.log('Локальный поток отсутствует, буферизация клиента');
+    pendingClients.set(id, { id, username: username || 'Guest' });
     return;
   }
-  if (!peers[clientId]) {
-    console.log(`Создание peer для нового клиента ${clientId}`);
-    createPeer(clientId, false);
+  if (!peers[id]) {
+    if (username === 'Guest') {
+      console.log(`Имя пользователя для ${id} - Guest, запрашиваем актуальное имя`);
+      socket.emit('request-username', id);
+      pendingClients.set(id, { id, username: username || 'Guest' });
+    } else {
+      console.log(`Создание peer для нового клиента ${id} с именем ${username}`);
+      createPeer(id, false, username);
+    }
+  }
+});
+
+socket.on('client-updated', ({ id, username }) => {
+  console.log(`Клиент ${id} обновил имя: ${username || 'Guest'}`);
+  const usernameLabel = document.querySelector(`#container-${id} .username-label`);
+  if (usernameLabel) {
+    console.log(`Обновление имени в UI для ${id}: ${username || 'Guest'}`);
+    usernameLabel.textContent = username || 'Guest';
+  }
+  if (pendingClients.has(id)) {
+    pendingClients.set(id, { id, username: username || 'Guest' });
+    if (localStream && !peers[id] && username !== 'Guest') {
+      console.log(`Обработка отложенного клиента ${id} с именем ${username}`);
+      createPeer(id, false, username);
+      pendingClients.delete(id);
+    }
+  }
+});
+
+socket.on('username-response', ({ id, username }) => {
+  console.log(`Получено имя пользователя для ${id}: ${username || 'Guest'}`);
+  if (!peers[id] && localStream && username !== 'Guest') {
+    console.log(`Создание peer для ${id} с именем ${username}`);
+    createPeer(id, false, username);
+    pendingClients.delete(id);
+  } else if (peers[id]) {
+    const usernameLabel = document.querySelector(`#container-${id} .username-label`);
+    if (usernameLabel) {
+      console.log(`Обновление имени в UI для ${id}: ${username || 'Guest'}`);
+      usernameLabel.textContent = username || 'Guest';
+    }
   }
 });
 
 socket.on('offer', (data) => {
-  console.log(`Получен offer от ${data.from}:`, JSON.stringify(data.offer));
-  const peer = peers[data.from] || createPeer(data.from, false);
+  console.log(`Получен offer от ${data.from} (имя: ${data.username || 'Guest'}):`, JSON.stringify(data.offer));
+  const peer = peers[data.from] || createPeer(data.from, false, data.username || 'Guest');
   peer.signal(data.offer);
 });
 
@@ -290,6 +361,7 @@ socket.on('client-disconnected', (clientId) => {
     if (videoContainer) videoContainer.remove();
     updateConnectionCount();
   }
+  pendingClients.delete(clientId);
 });
 
 window.addEventListener('resize', () => {
