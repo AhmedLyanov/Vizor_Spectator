@@ -1,4 +1,4 @@
-const socket = io('http://79.174.91.240:3000/', { reconnectionAttempts: 5, reconnectionDelay: 1000 });
+const socket = io('http://localhost:3000/', { reconnectionAttempts: 5, reconnectionDelay: 1000 });
 const peers = {};
 let localStream = null;
 const candidateBuffers = {};

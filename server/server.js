@@ -11,24 +11,43 @@ const io = new Server(server, {
   }
 });
 
-const clients = new Set();
+const clients = new Map();
 
 io.on('connection', (socket) => {
   console.log('Клиент подключился:', socket.id);
-  clients.add(socket.id);
-  socket.emit('clients', Array.from(clients));
+  clients.set(socket.id, { id: socket.id, username: 'Guest' });
+  socket.emit('clients', Array.from(clients.values()));
 
-  socket.broadcast.emit('new-client', socket.id);
+  socket.on('set-username', (data) => {
+    const username = data.username || 'Guest';
+    console.log(`Клиент ${socket.id} установил имя пользователя: ${username}`);
+    clients.set(socket.id, { id: socket.id, username });
+    // Send new-client and client-updated after updating clients
+    socket.broadcast.emit('new-client', { id: socket.id, username });
+    socket.broadcast.emit('client-updated', { id: socket.id, username });
+    socket.emit('clients', Array.from(clients.values()));
+  });
+
+  socket.on('request-username', (targetId) => {
+    const client = clients.get(targetId);
+    if (client) {
+      console.log(`Клиент ${socket.id} запросил имя пользователя для ${targetId}: ${client.username}`);
+      socket.emit('username-response', { id: targetId, username: client.username });
+    } else {
+      console.log(`Клиент ${targetId} не найден для запроса имени`);
+      socket.emit('username-response', { id: targetId, username: 'Guest' });
+    }
+  });
 
   socket.on('request-clients', () => {
     console.log(`Клиент ${socket.id} запросил список клиентов`);
-    socket.emit('clients', Array.from(clients));
+    socket.emit('clients', Array.from(clients.values()));
   });
 
   socket.on('offer', (data) => {
     if (clients.has(data.target)) {
-      console.log(`Получен offer от ${socket.id} для ${data.target}`);
-      socket.to(data.target).emit('offer', { ...data, from: socket.id });
+      console.log(`Получен offer от ${socket.id} (имя: ${clients.get(socket.id).username}) для ${data.target}`);
+      socket.to(data.target).emit('offer', { ...data, from: socket.id, username: clients.get(socket.id).username });
     } else {
       console.log(`Целевой клиент ${data.target} не найден`);
     }
@@ -53,7 +72,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('Клиент отключился:', socket.id);
+    console.log(`Клиент отключился: ${socket.id}`);
     clients.delete(socket.id);
     socket.broadcast.emit('client-disconnected', socket.id);
   });
