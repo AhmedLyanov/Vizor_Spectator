@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
     const username = data.username || 'Guest';
     console.log(`Клиент ${socket.id} установил имя пользователя: ${username}`);
     clients.set(socket.id, { id: socket.id, username });
-    // Send new-client and client-updated after updating clients
     socket.broadcast.emit('new-client', { id: socket.id, username });
     socket.broadcast.emit('client-updated', { id: socket.id, username });
     socket.emit('clients', Array.from(clients.values()));
