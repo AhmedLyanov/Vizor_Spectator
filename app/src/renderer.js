@@ -239,13 +239,14 @@ socket.on('connect', async () => {
   console.log('Подключен к серверу, ID:', socket.id);
   try {
     const username = await window.electronAPI.getUsername();
-    console.log('Отправляем имя пользователя на сервер:', username);
-    socket.emit('set-username', { username });
+    const hostname = await window.electronAPI.getHostname();
+    console.log(`Отправляем identity: ${username}, hostname: ${hostname}`);
+    socket.emit('set-identity', { username, hostname });  
     updateConnectionStatus(true);
     startScreenCapture();
   } catch (error) {
-    console.error('Ошибка при получении имени пользователя:', error);
-    socket.emit('set-username', { username: 'Guest' });
+    console.error('Ошибка при получении identity:', error);
+    socket.emit('set-identity', { username: 'Guest', hostname: 'unknown' });
     updateConnectionStatus(true);
     startScreenCapture();
   }
@@ -254,6 +255,11 @@ socket.on('connect', async () => {
 socket.on('connect_error', (err) => {
   console.error('Ошибка подключения к серверу:', err);
   updateConnectionStatus(false);
+});
+
+socket.on('joined-group', ({ group }) => {
+  console.log(`Присоединились к группе: ${group}`);
+  document.getElementById('group-title').innerHTML = `<i class="fas fa-desktop"></i> ${group}`;
 });
 
 socket.on('clients', (clients) => {

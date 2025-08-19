@@ -1,3 +1,4 @@
+// main.js remains unchanged
 const { app, BrowserWindow, desktopCapturer, ipcMain, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 const os = require('os');
@@ -111,3 +112,7 @@ ipcMain.handle('GET_SOURCES', async () => {
 ipcMain.handle('GET_USERNAME', async () => {
   return os.userInfo().username; 
 });
+
+ipcMain.handle("GET_HOSTNAME", async () => {
+  return os.hostname();
+})
