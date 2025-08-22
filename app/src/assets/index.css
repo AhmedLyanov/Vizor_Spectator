@@ -50,18 +50,15 @@ body {
 }
 
 h1 {
-  color: var(--text-primary);
-  font-weight: 500;
+  color: #ffffff;
+  font-weight: 300;
   font-size: var(--size-title-text);
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
 }
 
 #time_text {
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: #ffffff;
+  font-size: 20px;
   font-weight: 300;
 }
 

@@ -8,12 +8,9 @@ let tray = null;
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
-  
   app.quit();
 } else {
-
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       if (!mainWindow.isVisible()) mainWindow.show();
@@ -29,9 +26,13 @@ if (!gotTheLock) {
         preload: path.join(__dirname, 'preload.js'),
         contextIsolation: true,
         enableRemoteModule: false,
-        nodeIntegration: false
+        nodeIntegration: false,
+        
+        devTools: process.env.NODE_ENV === 'development' ? true : false,
+        
+        sandbox: true
       },
-      icon: path.join(__dirname, './assets/logo/logo.ico'), 
+      icon: path.join(__dirname, './assets/logo/logo.ico'),
       show: false
     });
 
@@ -40,16 +41,21 @@ if (!gotTheLock) {
         responseHeaders: {
           ...details.responseHeaders,
           'Content-Security-Policy': [
-            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://79.174.81.94:3000 http://79.174.81.94:3000; img-src 'self' data:"
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws:
           ]
         }
       });
     });
 
-    Menu.setApplicationMenu(null);
-    mainWindow.loadFile(path.join(__dirname, 'index.html')); 
     
-    // mainWindow.webContents.openDevTools(); 
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow.webContents.closeDevTools();
+    });
+
+    Menu.setApplicationMenu(null);
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
+
+    
 
     mainWindow.on('close', (event) => {
       if (!app.isQuitting) {
@@ -69,35 +75,18 @@ if (!gotTheLock) {
     const iconPath = path.join(__dirname, './assets/logo/logo.ico');
     const icon = nativeImage.createFromPath(iconPath);
     tray = new Tray(icon);
-
     const contextMenu = Menu.buildFromTemplate([
-      {
-        label: 'Показать приложение',
-        click: () => {
-          mainWindow.show();
-        }
-      },
-      {
-        label: 'Выход',
-        click: () => {
-          app.isQuitting = true;
-          app.quit();
-        }
-      }
+      { label: 'Показать приложение', click: () => { mainWindow.show(); } },
+      { label: 'Выход', click: () => { app.isQuitting = true; app.quit(); } }
     ]);
-
     tray.setToolTip('IThub Spectator');
     tray.setContextMenu(contextMenu);
-
-    tray.on('double-click', () => {
-      mainWindow.show();
-    });
+    tray.on('double-click', () => { mainWindow.show(); });
   }
 
   app.whenReady().then(() => {
     createWindow();
     createTray();
-
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
@@ -110,15 +99,12 @@ if (!gotTheLock) {
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-    
+      
     }
   });
 
   ipcMain.handle('GET_SOURCES', async () => {
-    const sources = await desktopCapturer.getSources({
-      types: ['window', 'screen'],
-      thumbnailSize: { width: 150, height: 150 }
-    });
+    const sources = await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 150, height: 150 } });
     return sources.map(source => ({
       id: source.id,
       name: source.name,
@@ -127,7 +113,7 @@ if (!gotTheLock) {
   });
 
   ipcMain.handle('GET_USERNAME', async () => {
-    return os.userInfo().username; 
+    return os.userInfo().username;
   });
 
   ipcMain.handle("GET_HOSTNAME", async () => {
