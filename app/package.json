@@ -1,7 +1,7 @@
 {
-  "name": "IThub_Spec",
+  "name": "ithub-spectator",
   "productName": "IThub_Spectator",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
@@ -9,7 +9,23 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
+    "dist": "electron-builder",
     "lint": "echo \"No linting configured\""
+  },
+  "repository": "https://github.com/AhmedLyanov/IThub_Spectator",
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
+  "build": {
+    "appId": "com.ahmedlyanov.ithubspectator",
+    "productName": "IThub Spectator",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist"
+    }
   },
   "keywords": [
     "demonstration, client, Spectator"
@@ -21,7 +37,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",
+    "electron-updater": "^6.6.2",
     "express": "^5.1.0",
     "simple-peer": "^9.11.1",
     "socket.io": "^4.8.1",
@@ -36,6 +54,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron/fuses": "^1.8.0",
-    "electron": "36.4.0"
+    "electron": "36.4.0",
+    "electron-builder": "^26.0.12"
   }
 }

@@ -3,5 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electronAPI', {
   getSources: () => ipcRenderer.invoke('GET_SOURCES'),
   getUsername: () => ipcRenderer.invoke('GET_USERNAME'),
-  getHostname: () => ipcRenderer.invoke('GET_HOSTNAME')
+  getHostname: () => ipcRenderer.invoke('GET_HOSTNAME'),
+  onUpdateMessage: (callback) => ipcRenderer.on('update-message', (_, data) => callback(data)),
+  downloadUpdate: () => ipcRenderer.send('download-update') 
 });

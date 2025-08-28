@@ -1,7 +1,21 @@
-const { app, BrowserWindow, desktopCapturer, ipcMain, Menu, Tray, nativeImage } = require('electron');
-const path = require('path');
-const os = require('os');
+const {
+  app,
+  BrowserWindow,
+  desktopCapturer,
+  ipcMain,
+  Menu,
+  Tray,
+  nativeImage,
+} = require("electron");
+const { autoUpdater, AppUpdater } = require("electron-updater");
+const log = require('electron-log'); 
+const path = require("path");
+const os = require("os");
 
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "info";
 let mainWindow = null;
 let tray = null;
 
@@ -10,7 +24,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       if (!mainWindow.isVisible()) mainWindow.show();
@@ -23,41 +37,40 @@ if (!gotTheLock) {
       width: 800,
       height: 600,
       webPreferences: {
-        preload: path.join(__dirname, 'preload.js'),
+        preload: path.join(__dirname, "preload.js"),
         contextIsolation: true,
         enableRemoteModule: false,
         nodeIntegration: false,
-        
-        devTools: process.env.NODE_ENV === 'development' ? true : false,
-        
-        sandbox: true
+
+        devTools: process.env.NODE_ENV === "development" ? true : false,
+
+        // sandbox: true,
       },
-      icon: path.join(__dirname, './assets/logo/logo.ico'),
-      show: false
+      icon: path.join(__dirname, "./assets/logo/logo.ico"),
+      show: false,
     });
 
-    mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-      callback({
-        responseHeaders: {
-          ...details.responseHeaders,
-          'Content-Security-Policy': [
-            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://79.174.81.94:3000 http://79.174.81.94:3000; img-src 'self' data:"
-          ]
-        }
-      });
-    });
+    mainWindow.webContents.session.webRequest.onHeadersReceived(
+      (details, callback) => {
+        callback({
+          responseHeaders: {
+            ...details.responseHeaders,
+            "Content-Security-Policy": [
+              "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 http://localhost:3000; img-src 'self' data:",
+            ],
+          },
+        });
+      }
+    );
 
-    
-    mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.on("devtools-opened", () => {
       mainWindow.webContents.closeDevTools();
     });
 
     Menu.setApplicationMenu(null);
-    mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    mainWindow.loadFile(path.join(__dirname, "index.html"));
 
-    
-
-    mainWindow.on('close', (event) => {
+    mainWindow.on("close", (event) => {
       if (!app.isQuitting) {
         event.preventDefault();
         mainWindow.hide();
@@ -65,29 +78,44 @@ if (!gotTheLock) {
       return false;
     });
 
-    mainWindow.on('minimize', (event) => {
+    mainWindow.on("minimize", (event) => {
       event.preventDefault();
       mainWindow.hide();
     });
   }
 
   function createTray() {
-    const iconPath = path.join(__dirname, './assets/logo/logo.ico');
+    const iconPath = path.join(__dirname, "./assets/logo/logo.ico");
     const icon = nativeImage.createFromPath(iconPath);
     tray = new Tray(icon);
     const contextMenu = Menu.buildFromTemplate([
-      { label: 'Показать приложение', click: () => { mainWindow.show(); } },
-      { label: 'Выход', click: () => { app.isQuitting = true; app.quit(); } }
+      {
+        label: "Показать приложение",
+        click: () => {
+          mainWindow.show();
+        },
+      },
+      {
+        label: "Выход",
+        click: () => {
+          app.isQuitting = true;
+          app.quit();
+        },
+      },
     ]);
-    tray.setToolTip('IThub Spectator');
+    tray.setToolTip("IThub Spectator");
     tray.setContextMenu(contextMenu);
-    tray.on('double-click', () => { mainWindow.show(); });
+    tray.on("double-click", () => {
+      mainWindow.show();
+    });
   }
 
   app.whenReady().then(() => {
     createWindow();
     createTray();
-    app.on('activate', () => {
+    autoUpdater.checkForUpdates();
+
+    app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
         createTray();
@@ -97,26 +125,61 @@ if (!gotTheLock) {
     });
   });
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      
+  app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") {
     }
   });
 
-  ipcMain.handle('GET_SOURCES', async () => {
-    const sources = await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 150, height: 150 } });
-    return sources.map(source => ({
+  ipcMain.handle("GET_SOURCES", async () => {
+    const sources = await desktopCapturer.getSources({
+      types: ["window", "screen"],
+      thumbnailSize: { width: 150, height: 150 },
+    });
+    return sources.map((source) => ({
       id: source.id,
       name: source.name,
-      thumbnail: source.thumbnail.toDataURL()
+      thumbnail: source.thumbnail.toDataURL(),
     }));
   });
 
-  ipcMain.handle('GET_USERNAME', async () => {
+  autoUpdater.on("update-available", () => {
+    mainWindow.webContents.send(
+      "update-message",
+      "Доступно новое обновление! 🚀"
+    );
+  });
+
+  autoUpdater.on("update-not-available", () => {
+    mainWindow.webContents.send("update-message", "Обновлений нет ✅");
+  });
+
+  autoUpdater.on("error", (err) => {
+    mainWindow.webContents.send("update-message", "Ошибка обновления: " + err);
+  });
+
+  autoUpdater.on("download-progress", (progressObj) => {
+    let log_message = `Скачивание: ${Math.round(progressObj.percent)}%`;
+    mainWindow.webContents.send("update-message", log_message);
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    mainWindow.webContents.send(
+      "update-message",
+      "Обновление загружено. Перезапуск..."
+    );
+    autoUpdater.quitAndInstall();
+  });
+
+  ipcMain.handle("GET_USERNAME", async () => {
     return os.userInfo().username;
   });
 
   ipcMain.handle("GET_HOSTNAME", async () => {
     return os.hostname();
   });
+
+  ipcMain.on("download-update", () => {
+  autoUpdater.downloadUpdate();
+});
+
 }
