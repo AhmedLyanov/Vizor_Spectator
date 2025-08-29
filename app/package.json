@@ -6,8 +6,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder",
-   
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/AhmedLyanov/IThub_Spectator",
   "publish": {
