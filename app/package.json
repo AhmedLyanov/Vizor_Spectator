@@ -1,7 +1,7 @@
 {
   "name": "ithub-spectator",
   "productName": "IThub_Spectator",
-  "version": "1.0.7",
+  "version": "1.0.0",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "appId": "com.ahmedlyanov.ithubspectator",
     "productName": "IThub Spectator",
     "win": {
+      "icon": "./src/assets/logo/logo.png",
       "target": "nsis"
     },
     "directories": {
