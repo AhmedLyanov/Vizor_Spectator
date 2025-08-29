@@ -1,13 +1,13 @@
 {
   "name": "ithub-spectator",
-  "productName": "IThub_Spectator",
+  "productName": "IThub Spectator",
   "version": "1.0.0",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder",
-    "lint": "echo \"No linting configured\""
+   
   },
   "repository": "https://github.com/AhmedLyanov/IThub_Spectator",
   "publish": {
@@ -21,8 +21,16 @@
       "icon": "./src/assets/logo/logo.png",
       "target": "nsis"
     },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "license": "build/license.txt"
+    },
     "directories": {
-      "output": "dist"
+      "output": "./dist"
     }
   },
   "keywords": [
@@ -45,6 +53,7 @@
   },
   "devDependencies": {
     "electron": "36.4.0",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "jest": "^30.1.1"
   }
 }
