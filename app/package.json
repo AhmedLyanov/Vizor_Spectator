@@ -5,10 +5,7 @@
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "start": "electron .",
     "dist": "electron-builder",
     "lint": "echo \"No linting configured\""
   },
@@ -29,7 +26,7 @@
     }
   },
   "keywords": [
-    "demonstration, client, Spectator"
+    "demonstration, client, spectator"
   ],
   "author": {
     "name": "Ahmed",
@@ -47,14 +44,6 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.1",
-    "@electron-forge/maker-deb": "^7.8.1",
-    "@electron-forge/maker-rpm": "^7.8.1",
-    "@electron-forge/maker-squirrel": "^7.8.1",
-    "@electron-forge/maker-zip": "^7.8.1",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
-    "@electron-forge/plugin-fuses": "^7.8.1",
-    "@electron/fuses": "^1.8.0",
     "electron": "36.4.0",
     "electron-builder": "^26.0.12"
   }
