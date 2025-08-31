@@ -1,5 +1,33 @@
-app/dist
-app/node_modules
-server/node_modules
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs (Electron, frontend)
+dist/
+out/
+build/
+release/
+
+# Logs
+logs
+*.log
+
+# Coverage reports (если будешь использовать jest --coverage)
+coverage/
+
+# Env configs
+.env
+.env.local
+
+# Editor settings
+.vscode/
+.idea/
+
+# Server database (лучше не хранить в гите)
 server/spectator.db
-.hintrc
