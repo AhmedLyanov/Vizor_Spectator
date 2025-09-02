@@ -50,7 +50,7 @@ body {
 }
 
 h1 {
-  color: #ffffff;
+  color: #ff0000;
   font-weight: 300;
   font-size: var(--size-title-text);
   letter-spacing: -0.5px;

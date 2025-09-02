@@ -56,7 +56,7 @@ if (!gotTheLock) {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:3000 http://localhost:3000; img-src 'self' data:",
+              "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://185.218.0.12:3000 http://185.218.0.12:3000; img-src 'self' data:",
             ],
           },
         });

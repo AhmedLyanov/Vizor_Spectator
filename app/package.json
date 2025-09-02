@@ -1,7 +1,7 @@
 {
   "name": "ithub-spectator",
   "productName": "IThub Spectator",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
   "scripts": {
