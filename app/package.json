@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder",
+    "electron:build": "electron-builder --win --publish never",
     "test":"jest"
   },
   "repository": "https://github.com/AhmedLyanov/IThub_Spectator",
