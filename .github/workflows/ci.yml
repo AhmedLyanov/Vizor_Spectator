@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.x, 20.x, 22.x] 
 
     steps:
       - name: Checkout repository
@@ -31,60 +31,7 @@ jobs:
         working-directory: ./app
         run: npm test
 
-      - name: Build application (without publish)
-        working-directory: ./app
-        run: npm run electron:build # новый скрипт без публикации
 
       - name: Install dependencies (server)
         working-directory: ./server
         run: npm install
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-build
-          path: app/dist/
-          if-no-files-found: error
-
-  create-release:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: app-build
-          path: dist/
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-
-      - name: Get version from package.json
-        id: get-version
-        working-directory: ./app
-        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ steps.get-version.outputs.VERSION }}
-          name: Release v${{ steps.get-version.outputs.VERSION }}
-          body: |
-            Автоматический релиз создан при пуше в main
-            
-            Коммит: ${{ github.event.head_commit.message }}
-            Автор: ${{ github.event.head_commit.author.name }}
-          files: |
-            dist/**/*
-            server/**/*
-            README.md
-            LICENSE
-          draft: false
-          prerelease: false
