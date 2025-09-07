@@ -28,6 +28,7 @@ coverage/
 # Editor settings
 .vscode/
 .idea/
+.hintrc
 
 # Server database (лучше не хранить в гите)
 server/spectator.db
