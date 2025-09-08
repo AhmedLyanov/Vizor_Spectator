@@ -8,7 +8,7 @@ const {
   nativeImage,
 } = require("electron");
 const { autoUpdater, AppUpdater } = require("electron-updater");
-const log = require('electron-log'); 
+const log = require("electron-log");
 const path = require("path");
 const os = require("os");
 
@@ -41,13 +41,17 @@ if (!gotTheLock) {
         contextIsolation: true,
         enableRemoteModule: false,
         nodeIntegration: false,
-
         devTools: process.env.NODE_ENV === "development" ? true : false,
-
-        // sandbox: true,
       },
       icon: path.join(__dirname, "./assets/logo/logo.ico"),
       show: false,
+      frame: false,
+      titleBarStyle: "hidden",
+      titleBarOverlay: {
+        color: "rgba(10, 14, 23, 0.8)",
+        symbolColor: "#E8EAED",
+        height: 35,
+      },
     });
 
     mainWindow.webContents.session.webRequest.onHeadersReceived(
@@ -179,7 +183,31 @@ if (!gotTheLock) {
   });
 
   ipcMain.on("download-update", () => {
-  autoUpdater.downloadUpdate();
-});
+    autoUpdater.downloadUpdate();
+  });
+  ipcMain.on("window-minimize", () => {
+    if (mainWindow) {
+      mainWindow.minimize();
+    }
+  });
 
+  ipcMain.on("window-maximize", () => {
+    if (mainWindow) {
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      } else {
+        mainWindow.maximize();
+      }
+    }
+  });
+
+  ipcMain.on("window-close", () => {
+    if (mainWindow) {
+      mainWindow.close();
+    }
+  });
+
+  ipcMain.on("window-is-maximized", (event) => {
+    event.returnValue = mainWindow ? mainWindow.isMaximized() : false;
+  });
 }
