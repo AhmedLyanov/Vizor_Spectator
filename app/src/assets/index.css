@@ -501,14 +501,12 @@ h1 {
   left: 0;
   right: 0;
   height: 35px;
-  background: linear-gradient(90deg, rgb(18, 35, 58));
   -webkit-backdrop-filter: blur(15px);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 0 0 15px;
   z-index: 10000;
-  border-bottom: 1px solid rgba(60, 64, 67, 0.2);
   user-select: none;
 }
 
@@ -538,29 +536,6 @@ h1 {
   font-weight: 500;
   opacity: 0.9;
 }
-
-.titlebar-controls {
-  display: flex;
-  height: 100%;
-  -webkit-app-region: no-drag;
-}
-
-.titlebar-btn {
-  width: 40px;
-  height: 35px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 11px;
-}
-
-
-
 
 
 
