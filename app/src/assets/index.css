@@ -62,18 +62,20 @@ h1 {
   font-weight: 300;
 }
 
+
 .control-panel {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background: var(--panel-bg);
-  padding: 15px 25px;
+  padding: 18px 25px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 90px;
 }
 
 .panel-content {
@@ -90,17 +92,18 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 12px;
+  padding: 12px 18px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-width: 90px;
+  min-width: 95px;
+  height: 75px;
+  justify-content: center;
 }
 
 .control-icon {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   fill: currentColor;
   transition: all 0.3s ease;
 }
@@ -108,7 +111,7 @@ h1 {
 .control-btn:hover {
   background: rgba(26, 115, 232, 0.15);
   color: var(--primary-color);
-  transform: translateY(-3px);
+
 }
 
 .control-btn.active {
@@ -121,7 +124,7 @@ h1 {
 }
 
 .control-btn span {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.5px;
 }
@@ -158,6 +161,33 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn.noactive {
+  position: relative;
+  cursor: not-allowed;
+  overflow: hidden;
+}
+
+.control-btn.noactive::after {
+  content: 'Скоро будет';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 2;
+}
+
+.control-btn.noactive > * {
+  opacity: 0.4;
 }
 
 .preview-section.hidden {
@@ -209,11 +239,11 @@ h1 {
   overflow: hidden;
   border: 2px solid var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
+  transition: border 0.3s ease;
 }
 
 .remote-video-container:hover {
-  transform: translateY(-5px);
+  border: 2px solid var(--text-primary);
 }
 
 .remote-video {
