@@ -129,30 +129,6 @@ h1 {
   letter-spacing: 0.5px;
 }
 
-.stopwatch-timer {
-  padding: 4px 0;
-  font-family: 'Courier New', monospace;
-  font-size: 35px;
-  font-weight: 600;
-  color: var(--primary-color);
-  text-align: right;
-  background: transparent;
-  border: none;
-  text-shadow: 0 0 15px rgba(26, 115, 232, 0.4);
-  letter-spacing: 1px;
-  min-width: 140px;
-}
-
-.stopwatch-timer span {
-  color: var(--primary-color);
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color), #64b5f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 8px rgba(26, 115, 232, 0.3));
-}
-
 .preview-section {
   margin: 25px 0;
   transition: all 0.3s ease;
