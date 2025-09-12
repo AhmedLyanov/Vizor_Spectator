@@ -1,24 +1,24 @@
 :root {
-  --background-color: #0A0E17;
-  --primary-color: #1A73E8;
-  --secondary-color: #34A853;
-  --accent-color: #EA4335;
-  --text-primary: #E8EAED;
-  --text-secondary: #9AA0A6;
-  --panel-bg: #1F2937;
+  --background-color: #0a0e17;
+  --primary-color: #1a73e8;
+  --secondary-color: #34a853;
+  --accent-color: #ea4335;
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --panel-bg: #1f2937;
   --card-bg: #202124;
-  --border-color: #3C4043;
-  --hover-color: #2C5FD1;
-  --size-title-text: 45px;
-  --success-color: #34A853;
-  --warning-color: #FBBC05;
+  --border-color: #3c4043;
+  --hover-color: #2c5fd1;
+  --size-title-text: 40px;
+  --success-color: #34a853;
+  --warning-color: #fbbc05;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  font-family: "Roboto", "Segoe UI", sans-serif;
 }
 
 body {
@@ -42,10 +42,37 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.header-controls {
+.header-left-section {
   display: flex;
   align-items: center;
+  gap: 25px;
+}
+
+/* Вертикальная разделительная линия */
+.vertical-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.4) 80%,
+    transparent 100%
+  );
+  margin: 0 20px;
+}
+
+.header-controls {
+  display: grid;
+  align-items: center;
   gap: 20px;
+}
+
+.container_indicator-connection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 h1 {
@@ -53,6 +80,7 @@ h1 {
   font-weight: 300;
   font-size: var(--size-title-text);
   letter-spacing: -0.5px;
+  margin: 0;
 }
 
 #time_text {
@@ -61,6 +89,55 @@ h1 {
   font-weight: 300;
 }
 
+#username {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.user-account-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 20px rgba(26, 115, 232, 0.3);
+  transition: all 0.3s ease;
+}
+
+.user-account-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(26, 115, 232, 0.5);
+}
+
+.info-demonstration {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+}
+
+/* Убираем старый псевдоэлемент, так как теперь используем отдельный div */
+.info-demonstration::after {
+  display: none;
+}
+
+.user-account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.auditorium_title h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--size-title-text);
+}
+
+.auditorium_title i {
+  font-size: 36px;
+  color: var(--primary-color);
+}
 
 .control-panel {
   position: fixed;
@@ -110,7 +187,6 @@ h1 {
 .control-btn:hover {
   background: rgba(26, 115, 232, 0.15);
   color: var(--primary-color);
-
 }
 
 .control-btn.active {
@@ -145,7 +221,7 @@ h1 {
 }
 
 .control-btn.noactive::after {
-  content: 'Скоро будет';
+  content: "Скоро будет";
   position: absolute;
   top: 0;
   left: 0;
@@ -186,7 +262,6 @@ h1 {
   max-width: 800px;
   height: 450px;
   border: 2px solid var(--primary-color);
-  border-radius: 12px;
   overflow: hidden;
   background-color: #000;
   margin: 0 auto;
@@ -210,7 +285,6 @@ h1 {
   position: relative;
   width: 100%;
   height: 200px;
-  border-radius: 12px;
   overflow: hidden;
   border: 2px solid var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -300,7 +374,7 @@ h1 {
 
 .connection-count {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   align-items: center;
 }
@@ -431,46 +505,110 @@ h1 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
   animation: fadeIn 0.3s ease;
 }
 
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .header-left-section {
+    gap: 20px;
+  }
+  
+  .vertical-divider {
+    height: 50px;
+    margin: 0 15px;
+  }
+  
+  .auditorium_title h1 {
+    font-size: 36px;
+  }
+  
+  #username {
+    font-size: 26px;
+  }
+}
+
 @media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  
+  .header-left-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  .vertical-divider {
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 20%,
+      rgba(255, 255, 255, 0.7) 50%,
+      rgba(255, 255, 255, 0.4) 80%,
+      transparent 100%
+    );
+  }
+  
+  .auditorium_title h1 {
+    font-size: 32px;
+  }
+  
+  .auditorium_title i {
+    font-size: 30px;
+  }
+  
+  #username {
+    font-size: 24px;
+  }
+  
+  #time_text {
+    font-size: 18px;
+  }
+  
+  .user-account-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
   .control-panel {
     padding: 12px 15px;
     flex-direction: column;
     gap: 15px;
+    height: auto;
   }
-  
+
   .panel-content {
     order: 2;
     width: 100%;
     gap: 15px;
+    flex-wrap: wrap;
+    justify-content: space-around;
   }
-  
-  .stopwatch-timer {
-    order: 1;
-    font-size: 28px;
-    text-align: center;
-    width: 100%;
-    min-width: auto;
-  }
-  
+
   .control-btn {
     min-width: 70px;
     padding: 8px 10px;
+    height: 65px;
   }
 
   #remote-videos {
     grid-template-columns: 1fr;
-  }
-
-  h1 {
-    font-size: 32px;
   }
 
   .update-modal-content {
@@ -480,25 +618,50 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  .stopwatch-timer {
-    font-size: 24px;
+  .app-container {
+    padding: 15px;
+    padding-top: 50px;
   }
   
+  .header-left-section {
+    gap: 12px;
+  }
+  
+  .auditorium_title h1 {
+    font-size: 28px;
+  }
+  
+  .auditorium_title i {
+    font-size: 26px;
+  }
+  
+  #username {
+    font-size: 22px;
+  }
+  
+  .user-account-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
   .panel-content {
     gap: 10px;
   }
-  
+
   .control-btn {
     min-width: 60px;
     padding: 6px 8px;
+    height: 60px;
   }
-  
+
   .control-btn span {
     font-size: 12px;
   }
+  
+  .connection-count {
+    font-size: 14px;
+  }
 }
-
-
 
 .custom-titlebar {
   position: fixed;
@@ -542,31 +705,27 @@ h1 {
   opacity: 0.9;
 }
 
-
-
-
 @media (max-width: 768px) {
   .custom-titlebar {
     height: 30px;
     padding: 0 0 0 10px;
   }
-  
+
   .titlebar-btn {
     width: 35px;
     height: 30px;
     font-size: 10px;
   }
-  
+
   .titlebar-title {
     font-size: 12px;
   }
-  
+
   .titlebar-logo {
     width: 16px;
     height: 16px;
   }
 }
-
 
 .app-container {
   padding: 25px;
@@ -582,11 +741,6 @@ h1 {
     padding-top: 45px;
   }
 }
-
-
-
-
-
 
 ::-webkit-scrollbar {
   width: 12px;
@@ -615,12 +769,10 @@ h1 {
   background: var(--background-color);
 }
 
-
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--card-bg);
 }
-
 
 #remote-videos::-webkit-scrollbar {
   width: 10px;
@@ -643,7 +795,6 @@ h1 {
   background: transparent;
 }
 
-
 ::-webkit-scrollbar-thumb {
   opacity: 0.7;
 }
@@ -652,12 +803,10 @@ h1 {
   opacity: 1;
 }
 
-
 .modal-content {
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) transparent;
 }
-
 
 .scrollable-element {
   scrollbar-width: thin;

@@ -29,24 +29,42 @@
     <div class="app-container">
       <div class="main-content">
         <div class="header">
-          <div class="info-demonstration">
+          <div class="header-left-section">
+            <div class="info-demonstration">
+              <div class="user-account-avatar">
+                <img
+                  src="./assets/media/windows-user.jpg"
+                  alt="account avatar"
+                />
+              </div>
+              <div class="user-account-information">
+                <div id="username"></div>
+                <div class="global_time_text">
+                  <span id="time_text"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Вертикальная разделительная линия -->
+            <div class="vertical-divider"></div>
+
             <span class="auditorium_title">
               <h1 id="group-title">
                 <i class="fas fa-desktop"></i>Нет подключения
               </h1>
             </span>
-            <div class="global_time_text">
-              <span id="time_text"></span>
-            </div>
           </div>
+
           <div class="header-controls">
-            <span
-              id="connection-status"
-              class="status-indicator status-disconnected"
-            ></span>
-            <span id="connection-count" class="connection-count"
-              >0 подключений</span
-            >
+            <div class="container_indicator-connection">
+              <span
+                id="connection-status"
+                class="status-indicator status-disconnected"
+              ></span>
+              <span id="connection-count" class="connection-count"
+                >0 подключений</span
+              >
+            </div>
           </div>
         </div>
         <div id="preview-section" class="preview-section hidden">
@@ -134,5 +152,6 @@
     <script src="./utils/time.js"></script>
     <script src="./utils/modalPreview.js"></script>
     <script src="./utils/updateChecker.js"></script>
+    <script src="./utils/username.js"></script>
   </body>
 </html>

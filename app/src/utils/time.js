@@ -5,7 +5,11 @@ function updateTime() {
     month: 'long',
     day: 'numeric'
   };
-  const formattedTime = now.toLocaleString("en-US", options);
+  let formattedTime = now.toLocaleString("ru-RU", options);
+  formattedTime = formattedTime.replace(/(^|\s)\S/g, function(letter) {
+    return letter.toUpperCase();
+  });
+  
   document.getElementById("time_text").textContent = formattedTime;
 }
 setInterval(updateTime, 1000);

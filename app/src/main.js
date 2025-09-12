@@ -174,6 +174,8 @@ if (!gotTheLock) {
     autoUpdater.quitAndInstall();
   });
 
+ 
+
   ipcMain.handle("GET_USERNAME", async () => {
     return os.userInfo().username;
   });
