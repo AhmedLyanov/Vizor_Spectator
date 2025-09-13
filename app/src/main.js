@@ -41,7 +41,7 @@ if (!gotTheLock) {
         contextIsolation: true,
         enableRemoteModule: false,
         nodeIntegration: false,
-        devTools: process.env.NODE_ENV === "development" ? true : false,
+        devTools: true, // Всегда включены DevTools
       },
       icon: path.join(__dirname, "./assets/logo/logo.ico"),
       show: false,
@@ -54,22 +54,17 @@ if (!gotTheLock) {
       },
     });
 
+    // Убрана проверка CSP для удобства разработки
     mainWindow.webContents.session.webRequest.onHeadersReceived(
       (details, callback) => {
         callback({
-          responseHeaders: {
-            ...details.responseHeaders,
-            "Content-Security-Policy": [
-              "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws://104.249.40.252:3000 http://104.249.40.252:3000; img-src 'self' data:",
-            ],
-          },
+          responseHeaders: details.responseHeaders,
         });
       }
     );
 
-    mainWindow.webContents.on("devtools-opened", () => {
-      mainWindow.webContents.closeDevTools();
-    });
+    // Автоматически открываем DevTools при запуске
+    mainWindow.webContents.openDevTools();
 
     Menu.setApplicationMenu(null);
     mainWindow.loadFile(path.join(__dirname, "index.html"));
@@ -173,8 +168,6 @@ if (!gotTheLock) {
     );
     autoUpdater.quitAndInstall();
   });
-
- 
 
   ipcMain.handle("GET_USERNAME", async () => {
     return os.userInfo().username;

@@ -45,7 +45,6 @@
               </div>
             </div>
 
-            <!-- Вертикальная разделительная линия -->
             <div class="vertical-divider"></div>
 
             <span class="auditorium_title">
@@ -75,7 +74,9 @@
             <video id="preview" autoplay muted></video>
           </div>
         </div>
-        <div id="remote-videos"></div>
+        <div id="remote-videos">
+          <!-- <div class="remote-video-container"></div> -->
+        </div>
       </div>
       <div class="control-panel">
         <div class="panel-content">
@@ -125,6 +126,18 @@
     </div>
     <div id="video-modal" class="modal">
       <div class="modal-content">
+        <div class="modal-video-user-controls">
+          <div class="user-device-info">
+            <span>Пользователь:</span>
+            <div class="modal-username" id="modal-username"></div>
+          </div>
+          <div class="user-device-info">
+            <span>Индекс устройства:</span>
+            <div class="index-device">
+              PS15
+            </div>
+          </div>
+        </div>
         <span class="close-modal">×</span>
         <video id="modal-video" autoplay></video>
       </div>

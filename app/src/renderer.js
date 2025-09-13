@@ -16,6 +16,17 @@ function openModal(videoId) {
   if (video) {
     activeModalVideoId = videoId;
     modalVideo.srcObject = video.srcObject;
+    
+  
+    const container = video.closest('.remote-video-container');
+    if (container) {
+      const usernameLabel = container.querySelector('.username-label');
+      if (usernameLabel) {
+        const modalUsername = document.getElementById('modal-username');
+        modalUsername.textContent = usernameLabel.textContent;
+      }
+    }
+    
     videoModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
@@ -28,11 +39,7 @@ function closeModalWindow() {
 }
 
 closeModal.addEventListener('click', closeModalWindow);
-window.addEventListener('click', (e) => {
-  if (e.target === videoModal) {
-    closeModalWindow();
-  }
-});
+
 
 function updateConnectionStatus(connected) {
   connectionStatus.className = connected ? 'status-indicator status-connected' : 'status-indicator status-disconnected';
