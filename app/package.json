@@ -1,6 +1,6 @@
 {
-  "name": "ithub-spectator",
-  "productName": "IThub Spectator",
+  "name": "vizor-spectator",
+  "productName": "Vizor Spectator",
   "version": "1.0.0",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
@@ -9,14 +9,14 @@
     "dist": "electron-builder",
     "test":"jest"
   },
-  "repository": "https://github.com/AhmedLyanov/IThub_Spectator",
+  "repository": "https://github.com/AhmedLyanov/Vizor_Spectator",
   "publish": {
     "provider": "github",
     "releaseType": "release"
   },
   "build": {
-    "appId": "com.ahmedlyanov.ithubspectator",
-    "productName": "IThub Spectator",
+    "appId": "com.ahmedlyanov.vizorspectator",
+    "productName": "Vizor Spectator",
     "directories": {
       "output": "dist"
     },

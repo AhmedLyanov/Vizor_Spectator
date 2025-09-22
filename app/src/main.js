@@ -107,7 +107,7 @@ if (!gotTheLock) {
         },
       },
     ]);
-    tray.setToolTip("IThub Spectator");
+    tray.setToolTip("Vizor Spectator");
     tray.setContextMenu(contextMenu);
     tray.on("double-click", () => {
       mainWindow.show();
