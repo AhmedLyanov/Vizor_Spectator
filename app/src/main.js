@@ -107,7 +107,7 @@ if (!gotTheLock) {
         },
       },
     ]);
-    tray.setToolTip("Vizor Spectator");
+    tray.setToolTip("HELLO");
     tray.setContextMenu(contextMenu);
     tray.on("double-click", () => {
       mainWindow.show();

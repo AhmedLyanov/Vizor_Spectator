@@ -1,6 +1,6 @@
 {
-  "name": "vizor-spectator",
-  "productName": "Vizor Spectator",
+  "name": "hello-spectator",
+  "productName": "HELLO",
   "version": "1.0.0",
   "description": "Application for monitoring students behaviour at the PC",
   "main": "src/main.js",
@@ -9,14 +9,14 @@
     "dist": "electron-builder",
     "test":"jest"
   },
-  "repository": "https://github.com/AhmedLyanov/Vizor_Spectator",
+  "repository": "https://github.com/AhmedLyanov/HELLO_Spectator",
   "publish": {
     "provider": "github",
     "releaseType": "release"
   },
   "build": {
-    "appId": "com.ahmedlyanov.vizorspectator",
-    "productName": "Vizor Spectator",
+    "appId": "com.ahmedlyanov.hellorspectator",
+    "productName": "HELLO",
     "directories": {
       "output": "dist"
     },
