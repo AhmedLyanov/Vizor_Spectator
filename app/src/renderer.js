@@ -1,4 +1,4 @@
-const socket = io('http://104.249.40.252:3000/', { reconnectionAttempts: Infinity, reconnectionDelay: 2000 });
+const socket = io('http://104.249.40.252:3001/', { reconnectionAttempts: Infinity, reconnectionDelay: 2000 });
 const peers = {};
 let localStream = null;
 const candidateBuffers = {};
