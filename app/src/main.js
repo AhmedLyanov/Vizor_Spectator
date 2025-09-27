@@ -110,7 +110,8 @@ if (!gotTheLock) {
     tray.setToolTip("HELLO");
     tray.setContextMenu(contextMenu);
     tray.on("double-click", () => {
-      mainWindow.show();
+        mainWindow.maximize();
+        mainWindow.show();
     });
   }
 
