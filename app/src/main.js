@@ -41,7 +41,8 @@ if (!gotTheLock) {
         contextIsolation: true,
         enableRemoteModule: false,
         nodeIntegration: false,
-        devTools: process.env.NODE_ENV === "development" ? true : false,
+        //Для разрабюотки true, продакшен - false
+        devTools: false,
       },
       icon: path.join(__dirname, "./assets/logo/logo.ico"),
       show: false,
@@ -67,9 +68,17 @@ if (!gotTheLock) {
       }
     );
 
+    // блокировка DevTools для продакшен
     mainWindow.webContents.on("devtools-opened", () => {
       mainWindow.webContents.closeDevTools();
     });
+
+    //  горячие клавиши DevTools
+    // mainWindow.webContents.on("before-input-event", (event, input) => {
+    //   if (input.key === "F12" || (input.control && input.key === "i")) {
+    //     mainWindow.webContents.toggleDevTools();
+    //   }
+    // });
 
     Menu.setApplicationMenu(null);
     mainWindow.loadFile(path.join(__dirname, "index.html"));
@@ -110,8 +119,8 @@ if (!gotTheLock) {
     tray.setToolTip("HELLO");
     tray.setContextMenu(contextMenu);
     tray.on("double-click", () => {
-        mainWindow.maximize();
-        mainWindow.show();
+      mainWindow.maximize();
+      mainWindow.show();
     });
   }
 
@@ -147,6 +156,34 @@ if (!gotTheLock) {
     }));
   });
 
+  // // Принудительная проверка обновлений в режиме разработки
+  // app.whenReady().then(() => {
+  //   createWindow();
+  //   createTray();
+
+  //   // ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ ПРОВЕРКУ В РАЗРАБОТКЕ
+  //   if (!app.isPackaged) {
+  //     // Вариант 1: Обманываем систему
+  //     process.env.NODE_ENV = 'production';
+
+  //     // Вариант 2: Явно форсируем конфиг
+  //     autoUpdater.forceDevUpdateConfig = true;
+
+  //     // Вариант 3: Вручную настраиваем GitHub
+  //     autoUpdater.setFeedURL({
+  //       provider: 'github',
+  //       owner: 'AhmedLyanov',
+  //       repo: 'HELLO_Spectator',
+  //       channel: 'latest'
+  //     });
+  //   }
+
+  //   // Запускаем проверку
+  //   setTimeout(() => {
+  //     autoUpdater.checkForUpdates();
+  //   }, 2000);
+  // });
+
   autoUpdater.on("update-available", () => {
     mainWindow.webContents.send(
       "update-message",
@@ -174,8 +211,6 @@ if (!gotTheLock) {
     );
     autoUpdater.quitAndInstall();
   });
-
- 
 
   ipcMain.handle("GET_USERNAME", async () => {
     return os.userInfo().username;
