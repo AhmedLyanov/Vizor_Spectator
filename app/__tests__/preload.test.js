@@ -5,7 +5,7 @@ jest.mock("electron", () => ({
 
 test("exposeInMainWorld called", () => {
   const { contextBridge } = require("electron");
-  require("../preload");
+  require("../src/preload");
   expect(contextBridge.exposeInMainWorld).toHaveBeenCalledWith(
     "electronAPI",
     expect.any(Object)
